@@ -1,0 +1,85 @@
+// Import the Liquid Crystal library
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // Creates an LCD object.
+Parameters: (rs, enable, d4, d5, d6, d7)
+const int trigPin = A0;
+const int echoPin = A1;
+const int blueLed = 9;
+const int greenLed = 8;
+const int redLed = 10;
+long duration;
+int distanceCm, distanceInch;
+void setup() {
+lcd.begin(16, 2); // Initializes the interface to the LCD screen,
+and specifies the dimensions (width and height) of the display
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+pinMode(blueLed, OUTPUT);
+
+Page 15 of 19
+
+pinMode(greenLed, OUTPUT);
+pinMode(redLed, OUTPUT);
+Serial.begin(9600);
+//initialized pins
+}
+void loop() {
+
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distanceCm = duration * 0.034 / 2;
+distanceInch = duration * 0.0133 / 2;
+/*
+lcd.clear();
+lcd.setCursor(0, 0); // Sets the location at which subsequent text
+written to the LCD will be displayed
+lcd.print("STOP ");
+digitalWrite(redLed, HIGH);
+*/
+if (distanceCm < 20) {
+// Object detected, turn on blue LED
+//LCD will say "Scanning"
+digitalWrite(redLed, LOW);
+lcd.clear();
+lcd.print("Scanning ");
+digitalWrite(blueLed, HIGH);
+// serial prints
+Serial.println("Scanning");
+Serial.println("Red LED Off, Blue LED On, Green LED Off");
+
+// Wait for 10 seconds
+
+Page 16 of 19
+
+delay(10000);
+// Turn off blue LED and turn on green LED
+digitalWrite(blueLed, LOW);
+digitalWrite(greenLed, HIGH);
+lcd.clear();
+lcd.print("Pass Detected ");
+lcd.setCursor(0, 1);
+lcd.print("Go Ahead ");
+// serial prints
+Serial.println("Pass Detected");
+Serial.println("Go Ahead");
+Serial.println("Red LED Off, Blue LED Off, Green LED On");
+delay(5000);
+} else { //default is red LEDs being turned on with the LCD
+saying STOP
+// No object detected, turn off both LEDs
+digitalWrite(blueLed, LOW);
+digitalWrite(greenLed, LOW);
+lcd.clear();
+lcd.setCursor(0, 0); // Sets the location at which subsequent
+text written to the LCD will be displayed
+lcd.print("STOP ");
+digitalWrite(redLed, HIGH);
+// serial prints
+Serial.println("STOP");
+Serial.println("Red LED On, Blue LED Off, Green LED Off");
+}
+}
